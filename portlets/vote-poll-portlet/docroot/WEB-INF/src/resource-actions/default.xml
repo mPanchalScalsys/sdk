@@ -1,0 +1,5 @@
+<?xml version="1.0"?> 
+<resource-action-mapping> 
+	<resource file="resource-actions/vote-permission.xml" />
+	<resource file="resource-actions/poll-permission.xml" /> 
+</resource-action-mapping> 

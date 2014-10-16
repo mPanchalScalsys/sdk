@@ -1,0 +1,31 @@
+.container{
+    display:table;
+    width:40%;
+    border-collapse: collapse;
+    width: 450px !important;
+    }
+ .heading{
+     font-weight: bold;
+     display:table-row;
+     background-color:#01DFD7;
+     text-align: center;
+     line-height: 25px;
+     font-size: 14px;
+     font-family:georgia;
+     color:#fff;
+ }
+ .table-row{  
+     display:table-row;
+     text-align: center;
+ }
+ .col{ 
+    display:table-cell;
+     border: 1px solid #CCC;
+ }
+ .ui-widget-header{
+ background: #2E64FE !important;
+ border: 0 !important;
+ }
+ .control-group {
+margin-bottom: 0px !important;
+}
