@@ -46,14 +46,13 @@
 	<portlet:param name="voteQuestionId" value="<%=String.valueOf(question.getQuestionId())%>"/>
 </portlet:renderURL>
 <% 
-	String deleteQuestionURL = "javascript:" + renderResponse.getNamespace() + "deleteVoteQuestions('"+question.getQuestionId()+"')";
+	String deleteQuestionURL = "javascript:" + renderResponse.getNamespace() + "deleteVoteQuestion('"+question.getQuestionId()+"')";
 %>
 <input type="hidden" id="<%=question.getQuestionId()%>_delete" value="<%=deleteVoteQuestionURL.toString()%>"/>
 <c:choose>
  	<c:when test="<%= themeDisplay.getPermissionChecker().hasPermission(themeDisplay.getScopeGroupId(), \"com.application.model.Question\", question.getQuestionId(), \"UPDATE\") %>">
 		<liferay-ui:icon image="edit" label="edit-vote" message="edit-vote" url="<%=editVoteQuestionURL%>"/>
 		<liferay-ui:icon image="delete" label="delete-vote" message="delete-vote" url="<%=deleteQuestionURL%>"/>
- 		<liferay-ui:icon src="<%=graphVoteSrc%>" message="display-graph" label="show-graph" url="<%=displayGraphURL%>"/>
  	</c:when>
 	<c:otherwise>
 		<c:choose>
@@ -81,7 +80,7 @@
  	</c:otherwise>
 </c:choose>
 <script type="text/javascript">
-<portlet:namespace/>deleteVoteQuestions = function(id){
+<portlet:namespace/>deleteVoteQuestion = function(id){
 	var result=confirm("<liferay-ui:message key='delete-confirmation' />");
 		if(result){
 			var url = document.getElementById(id+"_delete").value;

@@ -24,12 +24,6 @@ public class UserVoteDaoImpl implements UserVoteDao {
 		Session session = sessionFactory.getCurrentSession();
 		session.merge(userVote);
 	}
-	
-	@Override
-	public void deleteUserVote(UserVote userVote) {
-		Session session = sessionFactory.getCurrentSession();
-		session.delete(userVote);
-	}
 
 	@Override
 	public List<UserVote> findChoiceIdByQuestionId(long questionId) {
@@ -78,14 +72,14 @@ public class UserVoteDaoImpl implements UserVoteDao {
 	}
 
 	@Override
-	public List findUserCoefficiencyChoiceId(long choiceId,long propertyId) {
+	public List findUserCoefficiencyChoiceId(long choiceId) {
 		// TODO Auto-generated method stub
 		Session session = sessionFactory.getCurrentSession();
 		return session.createSQLQuery("SELECT users.userId, cusers.user_name, cop.coefficient " +
 				"FROM user_votes users " +
 				"INNER JOIN copro_to_users cusers ON users.userId = cusers.user_Id " +
 				"INNER JOIN coproperties cop ON cop.coproperties_id = cusers.coproperties_id " +
-				"WHERE cop.property_id = " + propertyId  + " AND users.choiceId = "+choiceId).list();
+				"WHERE users.choiceId = "+choiceId).list();
 	}
 	@Override
 	public Long findVotedUserOrNot(long propertyId, long pollId) {

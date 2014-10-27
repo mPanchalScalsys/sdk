@@ -30,7 +30,6 @@ import com.application.model.dao.ChoicesDao;
 import com.application.model.dao.PollDao;
 import com.application.model.dao.QuestionDao;
 import com.application.model.dao.UserVoteDao;
-import com.application.util.PollManager;
 import com.application.util.RenderHelper;
 import com.liferay.portal.kernel.dao.search.ResultRow;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -54,7 +53,6 @@ public class PollController extends MVCPortlet{
 		String operation = ParamUtil.getString(renderRequest, "operation");
 		/** Case for Add New Poll Entry **/   
 		if("addPoll".equals(operation)){
-			System.out.println("Add poll called");
 			Poll poll=new Poll();
 			poll.setPollTitle(StringPool.BLANK);
 			poll.setEnd_date(null);
@@ -98,10 +96,9 @@ public class PollController extends MVCPortlet{
 			try {
 				scopeGroupId = PortalUtil.getScopeGroupId(renderRequest);
 				//List<Question> questionList = questionDao.getQuestionByPropertyIdAndPollId(scopeGroupId, pollId);
-				List questionWithVote = questionDao.getQuestionsByPollId(pollId,scopeGroupId);
-				PollManager pollManager = new PollManager();
+				List questionWithVote = questionDao.getQuestionsByPollId(pollId);
 				
-				renderRequest.setAttribute("questionWithVote", pollManager.convertAndGroupJSON(questionWithVote));
+				renderRequest.setAttribute("questionWithVote", questionWithVote);
 				//renderRequest.setAttribute("questionList", questionList);
 			} catch (PortalException e) {
 				log.error("error in generating vote list :: ", e);
@@ -186,7 +183,7 @@ public class PollController extends MVCPortlet{
 			try {
 				 long scopeGroupId = PortalUtil.getScopeGroupId(renderRequest);
 				PortletURL portletURL = renderResponse.createRenderURL();
-				PollDao pollDao = (PollDao) ApplicationContextHolder.getContext().getBean(PollDao.class);
+				PollDao pollDao = ApplicationContextHolder.getContext().getBean(PollDao.class);
 				/** Set Table Headers **/
 				List<String> header = new ArrayList<String>();
 				header.add("poll-title");
@@ -257,20 +254,13 @@ public class PollController extends MVCPortlet{
 			poll = pollDao.getPollByPollId(pollId);
 		}else{
 			poll = new Poll();
-			poll.setCreated_date(new Date());
 		}
 		poll.setPollTitle(pollTitle);
 		poll.setStart_date(pollStartDate);
 		poll.setEnd_date(pollEndDate);
 		poll.setPropertyId(PortalUtil.getScopeGroupId(actionRequest));
-		Poll newPoll = pollDao.addPoll(poll);
-		log.info("updated Poll Id : " + newPoll.getPollId());
+		pollDao.addPoll(poll);
 		log.info("poll added successfully");
-		
-		actionResponse.setRenderParameter("newQuestionPollId", String.valueOf(newPoll.getPollId()));
-		/** Set renderparameter for render on which jsp page **/
-		actionResponse.setRenderParameter("operation", "editPoll");
-		
 	}
 	/***
 	 * Method for ADD or UPDATE Poll Question
@@ -295,15 +285,13 @@ public class PollController extends MVCPortlet{
 		/** Check Question Id is for Update or Add  **/
 		if(questionId > 0){
 			question = questionDao.findbyQuestionId(questionId);
-			question.setModified_date(new Date());
 		} else {
 			question = new Question();
-			question.setCreated_date(new Date());
 		}
 		question.setTitle(pQuestionTitle);
 		question.setCreated_by(user.getFullName());
-		/*if(questionId>0){question.setModified_date(new Date());}
-		else{question.setCreated_date(new Date());}*/
+		if(questionId>0){question.setModified_date(new Date());}
+		else{question.setCreated_date(new Date());}
 		question.setPollId(pollId);
 		question.setPropertyId(PortalUtil.getScopeGroupId(actionRequest));
 		if(questionType.equals("selectQuestion")){
@@ -361,10 +349,9 @@ public class PollController extends MVCPortlet{
 	 * @param actionRequest
 	 * @param actionResponse
 	 */
-	public void deletePollQuestionURL(ActionRequest actionRequest,ActionResponse actionResponse){
+	public void deleteQuestionURL(ActionRequest actionRequest,ActionResponse actionResponse){
 		/** Get The Question Id For Delete Question **/
-		int questionId = ParamUtil.getInteger(actionRequest, "deletePollQuestionId");
-		log.info("delete Question ID : " + questionId );
+		int questionId = ParamUtil.getInteger(actionRequest, "deleteQuestionId");
 		QuestionDao questionDao = ApplicationContextHolder.getContext().getBean(QuestionDao.class);
 		/** Retrive Question Based On Question Id **/
 		Question question = questionDao.findbyQuestionId(questionId);
@@ -377,14 +364,6 @@ public class PollController extends MVCPortlet{
 			choiceDao.deleteChoices(choice);
 			/** Delete choice One by One  **/
 		}
-		/** remove uservote given on question **/
-			UserVoteDao userVoteDao = ApplicationContextHolder.getContext().getBean(UserVoteDao.class);
-			List<UserVote> userVoteList = userVoteDao.findChoiceIdByQuestionId(questionId);
-			for(UserVote userVote : userVoteList ){
-				userVoteDao.deleteUserVote(userVote);
-				/** Delete userVote One by One  **/
-			}
-		/** **/
 		
 		/** Set Parameter for render page on as it is(Current Page)  **/
 		 /** set renderParameter for set the QuestionId **/
@@ -426,7 +405,7 @@ public class PollController extends MVCPortlet{
 		httpRequest.setAttribute("question", question);
 		httpRequest.setAttribute("poll", poll);
 		httpRequest.setAttribute("new", "true");
-		httpRequest.setAttribute("btnSTATUS", "enabled"); 
+		
 		StringBuilder result= new StringBuilder();
 		try {
 			result.append(RenderHelper.renderPage(servletContext, httpRequest, httpResponse, "/jsps/poll/add_poll_question.jsp"));  
@@ -445,14 +424,7 @@ public class PollController extends MVCPortlet{
 			ServletContext servletContext = httpRequest.getSession().getServletContext();
 			
 			String questionId = ParamUtil.getString(httpRequest, "questionId", StringPool.BLANK);
-			UserVoteDao userVoteDao = ApplicationContextHolder.getContext().getBean(UserVoteDao.class);
-		    List<UserVote> giveVoteOrNot = userVoteDao.findChoiceIdByQuestionId(Long.parseLong(questionId));
-		    if(!giveVoteOrNot.isEmpty()){
-		    	httpRequest.setAttribute("btnSTATUS", "disabled");
-		    }else {
-		    	httpRequest.setAttribute("btnSTATUS", "enabled"); 
-		    }
-		    log.info(" QUESTION ID : " + questionId );
+			log.info(" QUESTION ID : " + questionId );
 			
 			QuestionDao questionDao = ApplicationContextHolder.getContext().getBean(QuestionDao.class);
 			ChoicesDao choiceDao = ApplicationContextHolder.getContext().getBean(ChoicesDao.class);
@@ -468,17 +440,10 @@ public class PollController extends MVCPortlet{
 			log.info(" poll ID : " + question.getPollId() );
 			Poll poll = pollDao.getPollByPollId(question.getPollId());
 			
-			
-			
 			httpRequest.setAttribute("poll", poll);
 			httpRequest.setAttribute("choices", choices);
 			httpRequest.setAttribute("question", question);
 			httpRequest.setAttribute("new", "false");
-			if(!giveVoteOrNot.isEmpty()){
-				httpRequest.setAttribute("btnStatus", "enable");
-			}else {
-				httpRequest.setAttribute("btnStatus", "disable");
-			}
 			
 			StringBuilder result= new StringBuilder();
 			try {
@@ -504,31 +469,6 @@ public class PollController extends MVCPortlet{
 			PrintWriter out= resourceResponse.getWriter();
 			out.println(resultObj.toString());
 			log.info("choice deted successfully ");
-		}else if("getUser".equals(operation)){
-			
-			HttpServletRequest httpRequest = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(resourceRequest));
-			HttpServletResponse httpResponse = PortalUtil.getHttpServletResponse(resourceResponse);
-			ServletContext servletContext = httpRequest.getSession().getServletContext();
-			
-			String choiceId = ParamUtil.getString(httpRequest, "choiceId", StringPool.BLANK);
-			log.info("call from USERID: "+choiceId);
-			UserVoteDao userVoteDao = ApplicationContextHolder.getContext().getBean(UserVoteDao.class);
-			
-			List<UserVote> userVoteByList = userVoteDao.findUserIdChoiceId(Long.parseLong(choiceId));
-			
-			JSONObject resultObj = JSONFactoryUtil.createJSONObject();
-		
-			httpRequest.setAttribute("userVoteByList", userVoteByList);
-			StringBuilder result= new StringBuilder();
-			try {
-				result.append(RenderHelper.renderPage(servletContext, httpRequest, httpResponse, "/jsps/vote/dialog_view.jsp"));  
-			     } 
-			catch (ServletException e) {
-			       e.printStackTrace();
-			    }
-			
-			PrintWriter out= resourceResponse.getWriter();
-			out.println(result.toString());
 		}
 		
 	}
@@ -562,7 +502,6 @@ public class PollController extends MVCPortlet{
 			UserVote userVote = null;
 			if(voteStatus){
 			 userVote = userVoteDao.voteOrNoteByQuestionId(user.getUserId(),question.getQuestionId());
-			 	if(userVote == null){ userVote = new UserVote(); }
 			}else{
 			 userVote = new UserVote();
 			}
@@ -605,7 +544,6 @@ public class PollController extends MVCPortlet{
 		QuestionDao questionDao = ApplicationContextHolder.getContext().getBean(QuestionDao.class);
 		PollDao pollDao = ApplicationContextHolder.getContext().getBean(PollDao.class);
 		ChoicesDao choiceDao = ApplicationContextHolder.getContext().getBean(ChoicesDao.class);
-		UserVoteDao userVoteDao = ApplicationContextHolder.getContext().getBean(UserVoteDao.class);
 		Poll poll = pollDao.getPollByPollId(deletePollId);
 		long scopeGroupId;
 		try {
@@ -619,14 +557,7 @@ public class PollController extends MVCPortlet{
 						choiceDao.deleteChoices(choice);
 						/** Delete choice One by One  **/
 					}
-					/** Remove Questions From Poll one by one **/
-					
-					/** remove uservote given on question **/
-					List<UserVote> userVoteList = userVoteDao.findChoiceIdByQuestionId(question.getQuestionId());
-					for(UserVote userVote : userVoteList ){
-						userVoteDao.deleteUserVote(userVote);
-						/** Delete userVote One by One  **/
-					}
+				/** Remove Questions From Poll one by one **/
 				questionDao.deleteQuestion(question);
 			}
 			pollDao.deletePoll(poll);
@@ -636,8 +567,6 @@ public class PollController extends MVCPortlet{
 			log.error("error in generating question list for delete :: ", e);
 		}
 		/** NOT REMOVE ANY ENTRY FROM USERVOTE **/
-		
-		/** **/
 	}
 	
 	private static Log log = LogFactoryUtil.getLog(PollController.class);

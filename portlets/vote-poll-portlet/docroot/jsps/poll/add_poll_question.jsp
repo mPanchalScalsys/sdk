@@ -5,12 +5,21 @@
 Poll poll = (Poll)request.getAttribute("poll");
 Question question = (Question)request.getAttribute("question");
 List<Choices> choices = (List<Choices>)request.getAttribute("choices");
+
 String checkNew = (String)request.getAttribute("new");
-String status = (String)request.getAttribute("btnSTATUS");
+System.out.println("\n\n CheckNOW :: " + checkNew );
+
 boolean notNew=true;
 if("true".equals(checkNew)){
 	notNew = false;
 }
+
+
+//boolean isNew = "true".equals(checkNew);
+
+System.out.println("\n\n TRUE OR FALSE :: " + notNew );
+System.out.println("\n\n QUESTION ID " + question.getQuestionId());
+
 %>
 <portlet:actionURL var="editPollQuestionURL" name="editPollQuestionURL">
 </portlet:actionURL>
@@ -36,9 +45,9 @@ if("true".equals(checkNew)){
 
  <div id="<portlet:namespace/>selectOptionDiv" style="display: none;">
 	 <div id="addNewContacts">
-			<input type="button" class="btn" value="<liferay-ui:message key='add-choice'/>" onclick="<portlet:namespace/>addQuestionChoices();" <%if(status.equals("disabled")){%> disabled="disabled" <%}%> />
+			<input type="button" value="<liferay-ui:message key='add-choice'/>" onclick="<portlet:namespace/>addNewChoices();" />
 	</div>
-	 <div id="pollDynamicDiv">
+	 <div id="choiceDynamicDiv">
 	 <c:choose>
 		<c:when test="<%=notNew%>">
 			<c:forEach items="<%=choices%>" var="choice" varStatus="i">
@@ -60,15 +69,15 @@ if("true".equals(checkNew)){
 																<c:when test="${i.index+1 > 1}">
 																	<c:choose>
 																		<c:when test="<%= question.getCreated_date()!=null %>">
-																			<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="width: 22px; margin-top:18px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>ajaxRemoveChoiceDetail('${i.index+1}');" <%if(status.equals("disabled")){%>disabled="disabled" <%}%> />
+																			<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="width: 22px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>ajaxRemoveChoiceDetail('${i.index+1}');"/>
 																		</c:when>
 																		<c:otherwise>
-																			<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="width: 22px; margin-top:18px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>removeChoicebtn('${i.index+1}');"/>
+																			<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="width: 22px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>removeChoicebtn('${i.index+1}');"/>
 																		</c:otherwise>
 																	</c:choose>
 																</c:when>
 																<c:otherwise>
-																	<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="display:none;width: 22px; margin-top:18px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>removeChoicebtn('${i.index+1}');"/>
+																	<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="display:none;width: 22px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>removeChoicebtn('${i.index+1}');"/>
 																</c:otherwise>
 											</c:choose>
 										<div style="clear:both;"></div>
@@ -94,7 +103,7 @@ if("true".equals(checkNew)){
 														</div>
 														</td>
 														<td>
-																<input type="button" name='<portlet:namespace/>removeChoicebtn1' style="display:none;width: 22px; margin-top:18px;" id='<portlet:namespace/>removeChoicebtn1' value="-" onclick="<portlet:namespace/>removeChoicebtn('1');" />
+																<input type="button" name='<portlet:namespace/>removeChoicebtn1' style="display:none;width: 22px;" id='<portlet:namespace/>removeChoicebtn1' value="-" onclick="<portlet:namespace/>removeChoicebtn('1');" />
 																<div style="clear:both;"></div>
 														</td>
 													</tr>
@@ -119,7 +128,7 @@ if("true".equals(checkNew)){
 													</div>
 													</td>
 													<td>
-															<input type="button" name='<portlet:namespace/>removeChoicebtn1' style="display:none; width: 22px; margin-top:18px;" id='<portlet:namespace/>removeChoicebtn1' value="-" onclick="<portlet:namespace/>removeChoicebtn('1');" />
+															<input type="button" name='<portlet:namespace/>removeChoicebtn1' style="display:none;width: 22px;" id='<portlet:namespace/>removeChoicebtn1' value="-" onclick="<portlet:namespace/>removeChoicebtn('1');" />
 															<div style="clear:both;"></div>
 													</td>
 												</tr>
@@ -134,8 +143,8 @@ if("true".equals(checkNew)){
 </div> 
 
 <aui:button-row>
-		<aui:button type="submit" onClick="submitForm();" value="submit"/>
-		<aui:button type="cancel" value="cancel" />
+		<input type="button" onclick="javascript:<portlet:namespace/>submitForm();" value="<liferay-ui:message key='submit'/>" />
+		<input type=button value="<liferay-ui:message key='cancel'/>" onClick="self.location = '<portlet:renderURL><portlet:param name="operation" value="editPoll" /><portlet:param name="pollId" value="<%=String.valueOf(poll.getPollId())%>" /><portlet:param name="view" value="" /></portlet:renderURL>';" />
 </aui:button-row>
 </form>
 
@@ -156,7 +165,7 @@ if("true".equals(checkNew)){
 		 document.getElementById('<portlet:namespace/>selectOptionDiv').style.display = "none";
 		}
 	
-		<portlet:namespace/>addQuestionChoices = function(){
+		<portlet:namespace/>addNewChoices = function(){
 			var clonnObject = $("#choiceList1").clone(); 
 			var nCounter = $(".choiceList").length+1;
 			
@@ -179,21 +188,15 @@ if("true".equals(checkNew)){
 			
 			$(clonnObject).find("#<portlet:namespace/>removeChoicebtn"+nCounter).show();
 			
-			$("#pollDynamicDiv").append(clonnObject);
+			$("#choiceDynamicDiv").append(clonnObject);
 			
 		}
 		
-		submitForm = function(){
+		<portlet:namespace/>submitForm = function(){
 			$("#<portlet:namespace/>choiceContentList").val($(".choiceList").length);
 		  	document.<portlet:namespace/>choiceForm.action ="<%=editPollQuestionURL.toString()%>";
 		  	$("#<portlet:namespace/>choiceForm").submit(); 	 
 		};
-		
-		$(document).on('click','.btn-cancel', function(e) {
-		    // find the dialog that contains this .closeButton
-		    var $dialog = $(this).parents('.ui-dialog-content');
-		    $dialog.dialog('close');
-		});
 		
 		<portlet:namespace/>ajaxRemoveChoiceDetail = function(index){
 			var choiceRegisterId = $('#choiceList'+index).find('#<portlet:namespace/>choiceRegisterId'+index).val();

@@ -4,7 +4,7 @@
 		module="bnd"
 		revision="2.3.0"
 		status="release"
-		publication="20131205224237"
+		publication="20131205091237"
 	>
 		<description homepage="">
 		Artifactory auto generated POM

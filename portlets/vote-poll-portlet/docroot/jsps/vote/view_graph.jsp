@@ -5,7 +5,6 @@
 <portlet:resourceURL var="coEfficentURL">
 <portlet:param name="ajax" value="coEfficient"/>
 </portlet:resourceURL>
-
 <%
 UserVoteDao userVoteDao = ApplicationContextHolder.getContext().getBean(UserVoteDao.class);
 List<Object> userVote = (List)request.getAttribute("userVote");
@@ -14,11 +13,8 @@ List<Object> userCoEfficiencyVote = (List)request.getAttribute("userCoEfficiency
 <portlet:renderURL var="renderBackURL"></portlet:renderURL>
 <aui:button value="back" onClick="<%=renderBackURL%>"></aui:button>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<div style="width: 100%; clear:both;">
-<div id="piechart" style="width: 49.5%; border-right:1px solid #d3d3d3; float:left; "></div>
-<div id="piechart2" style="width: 49.5%; float:left;  "></div>
-</div>
-<div style="clear:both;"></div>
+<div id="piechart" style="width: 300; height: 500px;"></div>
+<div id="piechart2" style="width: 300; height: 500px;"></div>
 <script type="text/javascript">
 <!--
 	google.load("visualization", "1", {packages:["corechart"]});

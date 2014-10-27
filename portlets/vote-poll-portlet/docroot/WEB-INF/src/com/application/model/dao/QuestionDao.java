@@ -67,6 +67,6 @@ public interface QuestionDao {
 	 * @param pollId
 	 * 
 	 */
-	public List getQuestionsByPollId(long pollId,long groupId);
+	public List getQuestionsByPollId(long pollId);
 }
 

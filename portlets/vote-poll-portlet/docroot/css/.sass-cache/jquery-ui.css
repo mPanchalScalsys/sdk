@@ -960,23 +960,23 @@ body .ui-tooltip {
 
 .ui-icon,
 .ui-widget-content .ui-icon {
-  background-color: #eeeeee; }
+  background-image: url("../images/ui-icons_222222_256x240.png"); }
 
 .ui-widget-header .ui-icon {
-  background-image: url("../images/ui-icons_ffffff_256x240.png") important; }
+  background-image: url("../images/ui-icons_ffffff_256x240.png"); }
 
 .ui-state-default .ui-icon {
-  background-image: url("../images/ui-icons_ef8c08_256x240.png") important; }
+  background-image: url("../images/ui-icons_ef8c08_256x240.png"); }
 
 .ui-state-hover .ui-icon,
 .ui-state-focus .ui-icon {
-  background-image: url("../images/ui-icons_ef8c08_256x240.png") important; }
+  background-image: url("../images/ui-icons_ef8c08_256x240.png"); }
 
 .ui-state-active .ui-icon {
-  background-image: url("../images/ui-icons_ef8c08_256x240.png") important; }
+  background-image: url("../images/ui-icons_ef8c08_256x240.png"); }
 
 .ui-state-highlight .ui-icon {
-  background-image: url("../images/ui-icons_228ef1_256x240.png") important; }
+  background-image: url("../images/ui-icons_228ef1_256x240.png"); }
 
 .ui-state-error .ui-icon,
 .ui-state-error-text .ui-icon {
@@ -1317,30 +1317,7 @@ body .ui-tooltip {
   background-position: -80px -128px; }
 
 .ui-icon-closethick {
-  background-position: -96px -128px;
-  position: relative; }
-
-.ui-icon-closethick:after {
-  -moz-border-bottom-colors: none;
-  -moz-border-left-colors: none;
-  -moz-border-right-colors: none;
-  -moz-border-top-colors: none;
-  border-color: transparent transparent transparent transparent;
-  border-image: none;
-  border-style: solid;
-  border-width: 5px;
-  content: "X";
-  right: -1px;
-  margin-top: 0;
-  position: absolute;
-  bottom: -7px;
-  z-index: 2;
-  color: #000;
-  font-size: 12px;
-  font-weight: bold;
-  margin-top: 0;
-  position: absolute;
-  text-indent: 0px; }
+  background-position: -96px -128px; }
 
 .ui-icon-key {
   background-position: -112px -128px; }
@@ -1464,47 +1441,13 @@ body .ui-tooltip {
   background-position: -32px -192px; }
 
 .ui-icon-circle-triangle-e {
-  background-position: -48px -192px;
-  position: relative; }
-
-.ui-icon-circle-triangle-e:after {
-  -moz-border-bottom-colors: none;
-  -moz-border-left-colors: none;
-  -moz-border-right-colors: none;
-  -moz-border-top-colors: none;
-  border-color: transparent transparent transparent #000;
-  border-image: none;
-  border-style: solid;
-  border-width: 5px;
-  content: "";
-  left: 5px;
-  margin-top: 0;
-  position: absolute;
-  bottom: 3px;
-  z-index: 11111; }
+  background-position: -48px -192px; }
 
 .ui-icon-circle-triangle-s {
   background-position: -64px -192px; }
 
 .ui-icon-circle-triangle-w {
-  background-position: -80px -192px;
-  position: relative; }
-
-.ui-icon-circle-triangle-w:after {
-  -moz-border-bottom-colors: none;
-  -moz-border-left-colors: none;
-  -moz-border-right-colors: none;
-  -moz-border-top-colors: none;
-  border-color: transparent #000 transparent transparent;
-  border-image: none;
-  border-style: solid;
-  border-width: 5px;
-  content: "";
-  right: 5px;
-  margin-top: 0;
-  position: absolute;
-  bottom: 3px;
-  z-index: 11111; }
+  background-position: -80px -192px; }
 
 .ui-icon-circle-triangle-n {
   background-position: -96px -192px; }

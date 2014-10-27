@@ -4,7 +4,7 @@
 		module="jargs"
 		revision="1.0"
 		status="release"
-		publication="20091103230611"
+		publication="20091103093611"
 	>
 		<license name="jargs" url="http://jargs.cvs.sourceforge.net/jargs/jargs/LICENCE" />
 		<description homepage="" />

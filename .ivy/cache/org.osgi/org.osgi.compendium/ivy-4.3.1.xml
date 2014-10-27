@@ -4,7 +4,7 @@
 		module="org.osgi.compendium"
 		revision="4.3.1"
 		status="release"
-		publication="20121030151539"
+		publication="20121030024539"
 	>
 		<license name="
         Apache License, Version 2.0

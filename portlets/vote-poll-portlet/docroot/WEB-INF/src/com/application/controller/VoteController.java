@@ -67,7 +67,6 @@ public class VoteController extends MVCPortlet{
 			question.setEnd_date(null);
 			question.setTitle(StringPool.BLANK);
 			question.setDescription(StringPool.BLANK);
-			question.setType(StringPool.BLANK);
 			renderRequest.setAttribute("question", question);
 			renderRequest.setAttribute("choices", new ArrayList<Choices>());
 			renderRequest.setAttribute("new", "true");
@@ -108,17 +107,6 @@ public class VoteController extends MVCPortlet{
 			renderRequest.setAttribute("question", question);
 			renderRequest.setAttribute("choices", choices);
 			renderRequest.setAttribute("userVote", userVote);
-			
-			/** Display Graph Pass Object For Display Graph  **/
-			/*
-			UserVoteDao userVoteDao = ApplicationContextHolder.getContext().getBean(UserVoteDao.class);
-			List uservotes = userVoteDao.countByChoice(questionId);
-			renderRequest.setAttribute("userVoteList",uservotes);
-			List votes = userVoteDao.countByCoEfficiency(questionId);
-			renderRequest.setAttribute("userCoEfficiencyVote",votes);
-			*/
-			/** End of Display Graph **/
-			
 			include("/jsps/vote/give_vote_question.jsp", renderRequest, renderResponse);
 		}
 		else if ("editChoice".equals(operation)){   
@@ -139,16 +127,6 @@ public class VoteController extends MVCPortlet{
 			renderRequest.setAttribute("question", question);
 			renderRequest.setAttribute("choices", choices);
 			renderRequest.setAttribute("userVote", userVote);
-			
-			/** Display Graph Pass Object For Display Graph  **/
-			/*
-			List uservotes = userVoteDao.countByChoice(questionId);
-			renderRequest.setAttribute("userVoteList",uservotes);
-			List votes = userVoteDao.countByCoEfficiency(questionId);
-			renderRequest.setAttribute("userCoEfficiencyVote",votes);
-			*/
-			/** End of Display Graph **/
-			
 			include("/jsps/vote/give_vote_question.jsp", renderRequest, renderResponse);
 		}
 		else if ("editVote".equals(operation)) {
@@ -257,6 +235,10 @@ public class VoteController extends MVCPortlet{
 			e.printStackTrace();
 		}
 		
+		
+		/*Date questionStartDate = ParamUtil.getDate(actionRequest, "startdate", dateFormat);
+		Date questionEndDate = ParamUtil.getDate(actionRequest, "enddate", dateFormat);*/
+		
 		QuestionDao questionDao = ApplicationContextHolder.getContext().getBean(QuestionDao.class);
 		Question question;
 		/** Check Question Id is for Update or Add  **/
@@ -268,7 +250,6 @@ public class VoteController extends MVCPortlet{
 		/** set value in Question Object  **/
 		question.setTitle(questioinTitle);
 		question.setDescription(questionDesc);
-		question.setType("selectQuestion");
 		question.setCreated_by(user.getFirstName());
 		question.setStart_date(questionStartDate);
 		question.setEnd_date(questionEndDate);
@@ -388,7 +369,6 @@ public class VoteController extends MVCPortlet{
 	 */
 	public void serveResource(ResourceRequest resourceRequest,ResourceResponse resourceResponse) throws IOException,PortletException {
 		String operation = ParamUtil.getString(resourceRequest, "ajax",StringPool.BLANK);
-		
 		if("deleteChoice".equals(operation)){
 		/** Retrive the choiceId of Question **/
 		long choiceId = ParamUtil.getLong(resourceRequest, "cRegisterId");
@@ -412,8 +392,25 @@ public class VoteController extends MVCPortlet{
 			String choiceId = ParamUtil.getString(httpRequest, "choiceId", StringPool.BLANK);
 			log.info("call from USERID: "+choiceId);
 			UserVoteDao userVoteDao = ApplicationContextHolder.getContext().getBean(UserVoteDao.class);
+			
 			List<UserVote> userVoteByList = userVoteDao.findUserIdChoiceId(Long.parseLong(choiceId));
+			
 			JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+		/*	String table = "<table>";
+			table += "<tr><th>Name</th><th>Coefficiency</th></tr>";
+			for(UserVote userVote : userVoteByList){
+				try {
+					User user = UserLocalServiceUtil.getUserById(userVote.getUserId());
+					resultObj.put("status", "success");
+					table += "<tr><td>"+ user.getFullName() +"</td></tr>";
+				} catch (PortalException e) {
+					e.printStackTrace();
+				} catch (SystemException e) {
+					e.printStackTrace();
+				}
+			}
+			table += "</table>";*/
+			//
 			httpRequest.setAttribute("userVoteByList", userVoteByList);
 			StringBuilder result= new StringBuilder();
 			try {
@@ -435,18 +432,24 @@ public class VoteController extends MVCPortlet{
 			log.info("COEfficient from USERID: "+choiceId);
 			UserVoteDao userVoteDao = ApplicationContextHolder.getContext().getBean(UserVoteDao.class);
 			
-			long scopeGroupId;
-			try {
-				scopeGroupId = PortalUtil.getScopeGroupId(httpRequest);
-				log.info("groupId : " + scopeGroupId );
-				List userVoteByCoefficent = userVoteDao.findUserCoefficiencyChoiceId(Long.parseLong(choiceId),scopeGroupId);
-				httpRequest.setAttribute("userVoteByCoefficent", userVoteByCoefficent);
-			} catch (PortalException e1) {
-				log.error("error in find user by Coefficent :: ", e1);
-			} catch (SystemException e1) {
-				log.error("error in find user by Coefficent :: ", e1);
-			}
+			List userVoteByCoefficent = userVoteDao.findUserCoefficiencyChoiceId(Long.parseLong(choiceId));
 			
+			/*JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+			List<String> userNameList = new ArrayList<String>();
+			List<String> coefficencyList = new ArrayList<String>();*/
+			
+			/*String table = "<table>";
+			table += "<tr><th>Name</th><th>Coefficiency</th></tr>";
+			for(Object userVote : userVoteByCoefficent){
+				Object[] o = (Object[])userVote;
+				//userNameList.add(o[1].toString());
+				//coefficencyList.add(o[2].toString());
+				log.info("--" + o[1].toString() + "---" + o[2].toString());
+				table += "<tr><td>"+ o[1].toString() +"</td><td>"+ o[2].toString()+"</td></tr>";
+			}
+			table += "</table>";*/
+			
+			httpRequest.setAttribute("userVoteByCoefficent", userVoteByCoefficent);
 			StringBuilder result= new StringBuilder();
 			try {
 				result.append(RenderHelper.renderPage(servletContext, httpRequest, httpResponse, "/jsps/vote/dialog_coefficient_view.jsp"));  

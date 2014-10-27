@@ -34,7 +34,7 @@
 <%-- <input type="hidden" id='<portlet:namespace/>' name='<portlet:namespace/>' value="" />
 <input type="hidden" id='<portlet:namespace/>' name='<portlet:namespace/>' value="" /> --%>
 
-<c:if test='${voteGaved}'>
+<c:if test='${voteGaved == true}'>
  <div class="portlet-msg-error"><liferay-ui:message key="for-this-question-vote-has-been-given-already"/></div>
 </c:if>
 
@@ -43,17 +43,20 @@
 		backURL='<%=redirect.toString()%>'
 		title='<%= isNew ? "new-question" : "edit-question" %>'
 	/>
+	<%-- <aui:input name="txtQuestionTitle" label="Question" value="<%=question.getTitle() %>"  required="true" size="30" class="required" ></aui:input>
+	<aui:input name="txtQuestionDesc" label="Description" type="textarea" value="<%=question.getDescription()%>" class="required"></aui:input> --%>
+	
 	<div class="control-group">
 		<label class="control-label"><liferay-ui:message key='question-title'/></label> 
 		<input type="text" id="<portlet:namespace/>txtQuestionTitle" name='<portlet:namespace/>txtQuestionTitle' value="<%=question.getTitle() %>" required/>
 	</div>
 	<div class="control-group">
-		<label class="control-label"><liferay-ui:message key='description'/></label> 
-		<textarea id="<portlet:namespace/>txtQuestionDesc" name='<portlet:namespace/>txtQuestionDesc' value="<%=question.getDescription() %>" ></textarea>
+		<label class="control-label">Description</label> 
+		<textarea id="<portlet:namespace/>txtQuestionDesc" name='<portlet:namespace/>txtQuestionDesc' value="<%=question.getDescription()%>"></textarea>
 	</div>
 
 <div id="addNewContacts">
-		<input type="button" value="<liferay-ui:message key='add-choice'/>" onclick="<portlet:namespace/>addNewChoices();"  ${voteGaved ? "disabled" : "" } class="btn" />
+		<input type="button" value="<liferay-ui:message key='add-choice'/>" onclick="<portlet:namespace/>addNewChoices();" ${voteGaved == true ? "disabled" : "" }' />
 </div>
 <div id="choiceDynamicDiv">
 	<c:choose>
@@ -69,23 +72,31 @@
 									<td>
 										<div class="control-group">
 												<label class="control-label"><liferay-ui:message key='choice'/></label> 
-												<input type="text" name='<portlet:namespace/>includedChoice${i.index+1}' id='<portlet:namespace/>includedChoice${i.index+1}' value='${choice.description}' />
+												<c:choose>
+												<c:when test="${voteGaved}">
+													<input type="text" name='<portlet:namespace/>includedChoice${i.index+1}' id='<portlet:namespace/>includedChoice${i.index+1}' value='${choice.description}' disabled="disabled"/>
+												</c:when>
+												<c:otherwise>
+													<input type="text" name='<portlet:namespace/>includedChoice${i.index+1}' id='<portlet:namespace/>includedChoice${i.index+1}' value='${choice.description}'/>
+												</c:otherwise>
+												</c:choose>
+												
 										</div>
 									</td>
 									<td>
 											<c:choose>
 																<c:when test="${i.index+1 > 1}">
 																	<c:choose>
-																		<c:when test="<%= question.getCreated_date() != null %>">
-																			<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="width: 22px; margin-top:18px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>ajaxRemoveChoiceDetail('${i.index+1}');" ${voteGaved ? "disabled" : "" } />
+																		<c:when test="<%= question.getCreated_date() !=null %>">
+																			<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="width: 22px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>ajaxRemoveChoiceDetail('${i.index+1}');"/>
 																		</c:when>
 																		<c:otherwise>
-																			<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="width: 22px; margin-top:18px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>removeChoicebtn('${i.index+1}');"/>
+																			<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="width: 22px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>removeChoicebtn('${i.index+1}');"/>
 																		</c:otherwise>
 																	</c:choose>
 																</c:when>
 																<c:otherwise>
-																	<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="display:none;width: 22px; margin-top:18px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>removeChoicebtn('${i.index+1}');"/>
+																	<input type="button" name='<portlet:namespace/>removeChoicebtn${i.index+1}' style="display:none;width: 22px;" id='<portlet:namespace/>removeChoicebtn${i.index+1}' value="-" onclick="<portlet:namespace/>removeChoicebtn('${i.index+1}');"/>
 																</c:otherwise>
 											</c:choose>
 										<div style="clear:both;"></div>
@@ -112,7 +123,7 @@
 										</div>
 										</td>
 										<td>
-												<input type="button" name='<portlet:namespace/>removeChoicebtn1' style="display:none;width: 22px; margin-top:18px;" id='<portlet:namespace/>removeChoicebtn1' value="-" onclick="<portlet:namespace/>removeChoicebtn('1');" />
+												<input type="button" name='<portlet:namespace/>removeChoicebtn1' style="display:none;width: 22px;" id='<portlet:namespace/>removeChoicebtn1' value="-" onclick="<portlet:namespace/>removeChoicebtn('1');" />
 												<div style="clear:both;"></div>
 										</td>
 									</tr>
@@ -125,15 +136,15 @@
 </div>
 <div class="control-group">
 		<label class="control-label"><liferay-ui:message key='startdate'/></label> 
-		<input type="text" id="<portlet:namespace/>startdate" name='<portlet:namespace/>startdate' value="${startDate}"  required/>
+		<input type="text" id="<portlet:namespace/>startdate" name='<portlet:namespace/>startdate' value="${startDate}" required/>
 </div>
 <div class="control-group">
 		<label class="control-label"><liferay-ui:message key='enddate'/></label> 
 		<input type="text" id="<portlet:namespace/>enddate" name='<portlet:namespace/>enddate' value="${endDate}" required/>
 </div>
 <aui:button-row>
-		<aui:button type="submit" onClick="submitForm();" value="submit"/>
-		<aui:button type="cancel" value="cancel" href="<%=redirect%>" />
+		<input type="button" onclick="javascript:<portlet:namespace/>submitForm();" value="<liferay-ui:message key='submit'/>" ${voteGaved == true ? "disabled" : "" }' />
+		<input type=button value="<liferay-ui:message key='cancel'/>" onClick="self.location = '<portlet:renderURL><portlet:param name="view" value="" /></portlet:renderURL>';" />
 </aui:button-row>
 </form>
 
@@ -166,13 +177,13 @@
 	
 }
 
-	submitForm = function(){
+<portlet:namespace/>submitForm = function(){
 		$("#<portlet:namespace/>choiceContentList").val($(".choiceList").length);
 	  	document.<portlet:namespace/>choiceForm.action ="<%=editQuestionURL.toString()%>";
 	  	if($("#<portlet:namespace/>choiceForm").valid()){
 	  		$("#<portlet:namespace/>choiceForm").submit(); 	
 	  	} 
-	};
+};
 
 <portlet:namespace/>removeChoicebtn = function(index, confirmDelete){
 	if(!confirmDelete){
@@ -183,6 +194,8 @@
 	}
 	$('#choiceList'+index).remove();
 };
+
+
 
 <portlet:namespace/>ajaxRemoveChoiceDetail = function(index){
 	var choiceRegisterId = $('#choiceList'+index).find('#<portlet:namespace/>choiceRegisterId'+index).val();
@@ -231,4 +244,7 @@ $(function() {
 	     });
 });
 
+
+
 </script>
+

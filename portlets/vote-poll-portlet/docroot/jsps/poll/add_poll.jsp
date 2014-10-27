@@ -15,14 +15,14 @@ SearchContainer<Question> searchContainer = (SearchContainer<Question>) renderRe
 
 
  <c:if test='${dispMessage}'>
- 	<div class="portlet-msg-alert"><liferay-ui:message key="for-this-poll-vote-has-been-given-already"/></div>
+ 	<div class="portlet-msg-error"><liferay-ui:message key="for-this-poll-vote-has-been-given-already"/></div>
 </c:if>
 
 <form method="post" name="<portlet:namespace/>pollForm" id='<portlet:namespace/>pollForm'>
 <input type="hidden" id="<portlet:namespace/>pollId" name="<portlet:namespace/>pollId" value="<%=poll.getPollId()%>" />
  
 <liferay-ui:header 
-		backURL="<%=redirect%>" title='${isNew == true ? "add-poll" : "edit-poll"}' />
+		backURL="<%=redirect%>" title='${isNew == true ? "new-question" : "edit-question"}' />
 	
 <aui:input name="txtPollTitle" label="poll-title" value="<%=poll.getPollTitle() %>" />
 
@@ -35,10 +35,9 @@ SearchContainer<Question> searchContainer = (SearchContainer<Question>) renderRe
 		<input type="text" id="<portlet:namespace/>enddate" name='<portlet:namespace/>enddate' value="${endDate}"/>
 </div>
 <aui:button-row>
-		<aui:button type="submit" onClick="submitForm();" value="submit"/>
-		<aui:button type="cancel" value="cancel" href="<%=redirect%>" />
+		<input type="button" onclick="javascript:<portlet:namespace/>submitForm();" value="<liferay-ui:message key='submit'/>" />
+		<input type=button value="<liferay-ui:message key='cancel'/>" onClick="self.location = '<portlet:renderURL><portlet:param name="view" value="" /></portlet:renderURL>';" />
 </aui:button-row>
-
 </form>
 <c:choose>
 	<c:when test="${containerMax >= 10}">
@@ -49,7 +48,7 @@ SearchContainer<Question> searchContainer = (SearchContainer<Question>) renderRe
 	</c:when>
 	<c:otherwise>
 		<c:if test="${poll.pollId > 0}">
-			<input type="button" onclick="javascript:<portlet:namespace/>addPollQuestion('<%=poll.getPollId()%>');" value="<liferay-ui:message key='add-question'/>" class="btn" />
+			<input type="button" onclick="javascript:<portlet:namespace/>addPollQuestion('<%=poll.getPollId()%>');" value="<liferay-ui:message key='add-question'/>" />
 			<div style="margin-top: 10px;">
 				<liferay-ui:search-iterator searchContainer="<%=searchContainer%>" type="article" />
 			</div>
@@ -58,7 +57,7 @@ SearchContainer<Question> searchContainer = (SearchContainer<Question>) renderRe
 </c:choose>
 <script type="text/javascript" charset="utf-8">
 
-submitForm = function(){
+<portlet:namespace/>submitForm = function(){
 	/* $("#<portlet:namespace/>choiceContentList").val($(".choiceList").length); */
   	document.<portlet:namespace/>pollForm.action ="<%=editPollURL%>";
   	$("#<portlet:namespace/>pollForm").submit(); 	 
@@ -106,4 +105,4 @@ $(function() {
   }
   
 </script>
-<div id="dialogPollQuestion"  class="dialogPollQue"></div>
+<div id="dialogPollQuestion"></div>

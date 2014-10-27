@@ -31,10 +31,6 @@ public class Poll {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "end_date")
 	private Date end_date;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
-	private Date created_date;
 
 	@Column(name = "property_id")
 	private long propertyId;
@@ -78,12 +74,5 @@ public class Poll {
 	public void setEnd_date(Date end_date) {
 		this.end_date = end_date;
 	}
-
-	public Date getCreated_date() {
-		return created_date;
-	}
-
-	public void setCreated_date(Date created_date) {
-		this.created_date = created_date;
-	}
+	
 }

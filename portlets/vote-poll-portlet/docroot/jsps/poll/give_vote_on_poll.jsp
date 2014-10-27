@@ -10,7 +10,7 @@
 <aui:input name="pollStatus" type="hidden" value="<%=voteStatus%>"/>
 <c:forEach var="question" items="${questionsByPollId}" varStatus="i">
 	<aui:input name="questionId${question.questionId}" type="hidden" value="${question.questionId}"/>
-	<h4>${i.index+1}) ${question.title}</h4>
+	<h3>${i.index+1}).${question.title}</h3>
 		<c:choose>
 			<c:when test="${question.type eq 'selectQuestion' }">
 			<aui:input name="selectQuestion${question.questionId}" type="hidden" value="selectQuestion" />
@@ -28,7 +28,7 @@
 				%>
 				<table>
 					<c:forEach var="choice" items="${choices}" varStatus="j">
-						<tr><td><aui:input inlineLabel="right" required="true" name="choiceId${question.questionId}" type="radio" value="${choice.choiceId}" label="${choice.description}" checked='${choice.choiceId == userVote.choiceId}'></aui:input></td></tr>
+						<tr><td>${j.index+1}).</td><td><aui:input inlineLabel="right" name="choiceId${question.questionId}" type="radio" value="${choice.choiceId}" label="${choice.description}" checked='${choice.choiceId == userVote.choiceId}'><aui:validator name="required"/></aui:input></td></tr>
 					</c:forEach>
 				</table>
 			</c:when>
@@ -41,7 +41,7 @@
 					 pageContext.setAttribute("userVote", userVote); 
 					 }
 			 %>  
-					<aui:input name="textAnswers${question.questionId}" type="textarea" label="" value="${userVote.user_open_vote_desc}" ></aui:input> 
+					<aui:input name="textAnswers${question.questionId}" type="textarea" label="" value="${userVote.user_open_vote_desc}" ><aui:validator name="required"/></aui:input> 
 			</c:otherwise>
 		</c:choose>	
 </c:forEach>

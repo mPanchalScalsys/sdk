@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
-	<info organisation="com.liferay" module="plugins" revision="working@SCALSYS6" status="integration" publication="20141021172617"/>
+	<info organisation="com.liferay" module="plugins" revision="working@SCALSYS6" status="integration" publication="20140319005822"/>
 
 	<dependencies defaultconf="default">
 		<dependency name="activation" org="javax.activation" rev="1.1"/>

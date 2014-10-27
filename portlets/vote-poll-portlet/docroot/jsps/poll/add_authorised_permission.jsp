@@ -33,12 +33,6 @@ Long votingTime = poll.getStart_date() != null ? poll.getStart_date().getTime() 
 boolean allowVoting = currentTime < queEndTime;
 boolean startVoting = currentTime > votingTime;
 
-boolean lock = true;
-Long userListVoted = userVoteDao.findVotedUserOrNot(property_Id, poll.getPollId());
-if(userListVoted != null && userListVoted != 0){
-	lock = false;
-}
-System.out.println("BUTTON STATUS: " + lock );
 String giveVoteSrc = themeDisplay.getPathThemeImages() + "/ratings/thumbs_up_icon.png";
 String editVoteSrc = themeDisplay.getPathThemeImages() + "/ratings/thumbs_up_icon_hover.png";
 String graphVoteSrc = themeDisplay.getPathThemeImages() + "/api/property.png";
@@ -75,17 +69,8 @@ String graphVoteSrc = themeDisplay.getPathThemeImages() + "/api/property.png";
 
 <c:choose>
 	<c:when test="<%= themeDisplay.getPermissionChecker().hasPermission(themeDisplay.getScopeGroupId(), \"com.application.model.Poll\", poll.getPollId(), \"UPDATE\") %>">
-		<c:choose>
-			<c:when test="<%=lock%>">
-				<liferay-ui:icon image="edit" label="edit-poll" message="edit-poll" url="<%=editPollURL.toString()%>" />
-				<liferay-ui:icon image="delete" label="delete-poll" message="delete-poll" url="<%=deletePollById%>"/>
-			</c:when>
-			<c:otherwise>
-				<liferay-ui:icon image="lock" label="can-not-edit-poll" message="can-not-edit-poll-vote-started"  />
-				<liferay-ui:icon image="lock" label="can-not-delete-poll" message="can-not-delete-poll-vote-started" />
-			</c:otherwise>
-		</c:choose>
-		<liferay-ui:icon src="<%=graphVoteSrc%>" message="display-graph" label="show-graph" url="<%=displayGraphURL%>"/>
+		<liferay-ui:icon image="edit" label="edit-poll" message="edit-poll" url="<%=editPollURL.toString()%>"/>
+		<liferay-ui:icon image="delete" label="delete-poll" message="delete-poll" url="<%=deletePollById%>"/>
 	</c:when>
 	<c:otherwise>
 		<c:choose>
@@ -94,10 +79,10 @@ String graphVoteSrc = themeDisplay.getPathThemeImages() + "/api/property.png";
 						<c:when test="<%=allowVoting%>">
 							<c:choose>
 								<c:when test="<%=isVoted%>">
-									<liferay-ui:icon src="<%=editVoteSrc%>" message="edit-answer" label="edit-answer" url="<%=applyVoteURL.toString()%>"/>
+									<liferay-ui:icon src="<%=editVoteSrc%>" message="edit-vote" label="give-vote" url="<%=applyVoteURL.toString()%>"/>
 								</c:when>
 								<c:otherwise>
-									<liferay-ui:icon src="<%=giveVoteSrc%>" message="give-answer" label="give-answer" url="<%=applyVoteURL.toString()%>"/>
+									<liferay-ui:icon src="<%=giveVoteSrc%>" message="give-vote" label="give-vote" url="<%=applyVoteURL.toString()%>"/>
 								</c:otherwise>
 							</c:choose>
 						</c:when>
